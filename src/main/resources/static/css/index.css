@@ -1,0 +1,58 @@
+html, body {
+    font-size: 14px;
+    color: #505050;
+    line-height: 1.75em;
+    background: #ebebeb;
+    position: relative;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+}
+.main-navigation{
+    background-color: #ffffff;
+    border: 1px solid #ebebeb;
+}
+.main-navigation .menu li {
+    list-style: none;
+    display: inline-block;
+    position: relative;
+}
+ul, menu, dir {
+    display: inline-block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+.main-navigation .menu li {
+    list-style: none;
+    display: inline-block;
+    position: relative;
+}
+.main-navigation .menu li a {
+    color: #505050;
+    line-height: 4em;
+    display: block;
+    padding: 0 21px;
+}
+.main-navigation .menu li a:hover{
+    color: #e67e22;
+    cursor: pointer;
+}
+.main-navigation .menu li a .logo{
+    width: 30px;
+}
+a:hover{
+    text-decoration: none;
+}
+a {
+    color: #e67e22;
+    outline: none;
+}
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+a {
+    background-color: transparent;
+}
