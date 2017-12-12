@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+    <link th:href="@{/css/toastr.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <title>首页</title>
 </head>
@@ -23,37 +24,60 @@
         </div>
     </nav>
     <div class="container-fluid" id="container">
-        <table class="table table-hover">
-            <thead>
-                <th>编号</th>
-                <th>姓名</th>
-                <th>性别</th>
-                <th>年龄</th>
-                <th>地址</th>
-            </thead>
-            <tbody>
-                <tr th:each="user : ${userList}">
-                    <td th:text="${user.id}"></td>
-                    <td th:text="${user.name}"></td>
-                    <td th:text="${user.sex}"></td>
-                    <td th:text="${user.age}"></td>
-                    <td th:text="${user.address}"></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table table-hover">
+                        <thead>
+                        <th>编号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>年龄</th>
+                        <th>地址</th>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${userList}">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.sex}"></td>
+                            <td th:text="${user.age}"></td>
+                            <td th:text="${user.address}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-    <h1>我是首页</h1>
+    <!--<h1>我是首页</h1>
     <p th:text="${msg}">3333</p>
     <p th:text="${msg}">3333</p>
-    请输入：<textarea rows="5" cols="10" id="inputMsg" name="inputMsg"></textarea>
-    <button onclick="doSend();">发送</button>
+    <div  id="head">
+        webSocket消息推送
+    </div>
+    <div  id="msg">
+    </div>-->
 </body>
 <script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/js/toastr.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.pjax.js}"></script>
 <!--<script type="text/javascript" th:src="@{/js/sockjs-1.1.1.js}"></script>-->
 <script type="text/javascript">
     $(function(){
+        toastr.options={
+                "closeButton":false,//显示关闭按钮
+                "debug":false,//启用debug
+                "positionClass":"toast-bottom-right",//弹出的位置
+                "showDuration":"300",//显示的时间
+                "hideDuration":"1000",//消失的时间
+                "timeOut":"5000",//停留的时间
+                "extendedTimeOut":"1000",//控制时间
+                "showEasing":"swing",//显示时的动画缓冲方式
+                "hideEasing":"linear",//消失时的动画缓冲方式
+                "showMethod":"fadeIn",//显示时的动画方式
+                "hideMethod":"fadeOut"//消失时的动画方式
+            };
 
         /*$.pjax({
             url:'',
@@ -103,44 +127,36 @@
     });
 
 
-    /*var websocket = null;
-    if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://localhost:8080/websocket/socketServer.do");
-    }
-    else if ('MozWebSocket' in window) {
-        websocket = new MozWebSocket("ws://localhost:8080/websocket/socketServer.do");
-    }
-    else {
-        websocket = new SockJS("http://localhost:8080/sockjs/socketServer.do");
-    }
-    websocket.onopen = onOpen;
-    websocket.onmessage = onMessage;
-    websocket.onerror = onError;
-    websocket.onclose = onClose;
-
-    function onOpen(openEvt) {
-        //alert(openEvt.Data);
-    }
-
-    function onMessage(evt) {
-        alert(evt.data);
-    }
-    function onError() {}
-    function onClose() {}
-
-    function doSend() {
-        if (websocket.readyState == websocket.OPEN) {
-            var msg = document.getElementById("inputMsg").value;
-            websocket.send(msg);//调用后台handleTextMessage方法
-            alert("发送成功!");
+    $(function(){
+        var websocket;
+        if ('WebSocket' in window) {
+            websocket = new WebSocket("ws://localhost:8080/veg");
+        } else if ('MozWebSocket' in window) {
+            websocket = new MozWebSocket("ws://veg");
         } else {
-            alert("连接失败!");
+            websocket = new SockJS("http://localhost:8080/com/veg");
         }
-    }
-    window.close=function()
-    {
-        websocket.onclose();
-    }*/
+        websocket.onopen = function (evnt) {
+            $("#head").html("连接服务器成功!")
+            send();
+        };
+        websocket.onmessage = function (evnt) {
+            toastr.info(evnt.data);
+            $("#msg").html($("#msg").html() + "<br/>" + evnt.data);
+        };
+        websocket.onerror = function (evnt) {
+        };
+        websocket.onclose = function (evnt) {
+            $("#head").html("与服务器断开了链接!")
+        }
+        function send(){
+            if (websocket != null) {
+                websocket.send("客户端请求");
+            } else {
+                alert('未与服务器链接.');
+            }
+        }
+    });
 
 
 </script>

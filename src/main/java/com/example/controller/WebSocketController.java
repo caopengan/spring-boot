@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.push.SpringWebSocketHandler;
+import com.example.push.WebSocketHander;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 public class WebSocketController {
 
 //    @Autowired
-//    public SpringWebSocketHandler springWebSocketHandler;
+//    public WebSocketHander webSocketHander;
 
     @RequestMapping("/websocket/login")
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception {
