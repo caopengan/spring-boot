@@ -1,0 +1,49 @@
+input[type="text"],
+input[type="password"] {
+    border: none;
+    width: 100%;
+}
+
+.active > input{
+    border: 1px #32BC61 solid;
+}
+
+.error > input {
+    border: 1px #f00 solid;
+}
+
+.error input[type="text"],
+.error input[type="password"] {
+    color: #f00;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border: none;
+    outline: none;
+}
+
+.valid_message {
+    color: #1890ff;
+    position: absolute;
+    left: 345px;
+    top: 5px;
+    width: 200px;
+}
+
+.error .valid_message {
+    color: #f00;
+}
+
+.success .valid_message {
+    background: url(../images/sucess.png) no-repeat;
+    left: auto;
+    right: 0;
+    top: 10px;
+    width: 16px;
+    height: 16px;
+}
+
+.none {
+    display: none;
+}

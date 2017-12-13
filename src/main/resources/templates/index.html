@@ -18,8 +18,10 @@
                 <li class="presentation"><a>用户</a></li>
             </ul>
             <ul class="menu pull-right">
-                <li class="presentation"><a>登录</a></li>
-                <li class="presentation"><a id="register" href="/hello/register" data-pjax="container">注册</a></li>
+                <li class="presentation" th:if="${session.userName != null}" th:text="${session.userName}"></li>
+                <li class="presentation" th:if="${session.userName != null}"><a>退出</a></li>
+                <li class="presentation" th:unless="${session.userName != null}"><a>登录</a></li>
+                <li class="presentation" th:unless="${session.userName != null}"><a target="_blank" href="/register">注册</a></li>
             </ul>
         </div>
     </nav>
@@ -127,7 +129,7 @@
     });
 
 
-    $(function(){
+    function initWebSocket(){
         var websocket;
         if ('WebSocket' in window) {
             websocket = new WebSocket("ws://localhost:8080/veg");
@@ -137,26 +139,27 @@
             websocket = new SockJS("http://localhost:8080/com/veg");
         }
         websocket.onopen = function (evnt) {
-            $("#head").html("连接服务器成功!")
-            send();
+//            $("#head").html("连接服务器成功!");
+//            send();
         };
         websocket.onmessage = function (evnt) {
             toastr.info(evnt.data);
-            $("#msg").html($("#msg").html() + "<br/>" + evnt.data);
+//            $("#msg").html($("#msg").html() + "<br/>" + evnt.data);
         };
         websocket.onerror = function (evnt) {
         };
         websocket.onclose = function (evnt) {
-            $("#head").html("与服务器断开了链接!")
+//            $("#head").html("与服务器断开了链接!");
         }
-        function send(){
+        function send(msg){
             if (websocket != null) {
-                websocket.send("客户端请求");
+                websocket.send(msg);
             } else {
-                alert('未与服务器链接.');
+//                alert('未与服务器链接.');
+                toastr.error("未与服务器链接");
             }
         }
-    });
+    }
 
 
 </script>
