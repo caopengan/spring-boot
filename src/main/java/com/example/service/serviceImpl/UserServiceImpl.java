@@ -43,5 +43,19 @@ public class UserServiceImpl implements UserService{
         return true;
     }
 
+    @Override
+    public boolean userLogin() {
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        User user = userRepository.withEmailAndPasswordQuery(email, password);
+        if(user != null){
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userId",user.getId());
+            session.setAttribute("userName",user.getName());
+            return true;
+        }
+        return false;
+    }
+
 
 }

@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     User findByNameAndAddress(String name,String address);
 
-//    User withNameAndAddressQuery(@Param("name")String name,@Param("address")String address);
+    User withEmailAndPasswordQuery(@Param("email")String email,@Param("password")String password);
 
 //    User withNameAndAddressNamedQuery(String name,String address);
 

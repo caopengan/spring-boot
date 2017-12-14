@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -79,16 +80,44 @@ public class IndexController {
     }
 
     @RequestMapping("/register")
-    public String register(ModelMap modelMap){
-//        modelMap.put("title","注册");
-//        System.out.println("==========注册页面");
-//        String header = request.getHeader("X-PJAX");
-//        System.out.println("获取消息头信息=========="+header);
-//        if(header == null){
-//            return "redirect:/hello/";
-//        }
+    public String register(){
         return "register";
     }
 
+    @RequestMapping("/login")
+    public String login() {
 
+        return "login";
+    }
+
+    @RequestMapping("/loginAction")
+    public String loginAction(){
+        boolean b = userService.userLogin();
+        String ajaxReq = request.getHeader("AJAX");
+        if(b){
+            if(ajaxReq != null){
+                return "index";
+            }
+            return "redirect:/index";
+        }
+        return "login";
+    }
+
+    @RequestMapping("/ajaxLogin")
+    @ResponseBody
+    public String ajaxLogin(){
+        boolean b = userService.userLogin();
+        if(b){
+            return "success";
+        }
+        return "error";
+    }
+
+    @RequestMapping("/logout")
+    public String logout(){
+        HttpSession session = request.getSession(true);
+        session.removeAttribute("userId");
+        session.removeAttribute("userName");
+        return "login";
+    }
 }

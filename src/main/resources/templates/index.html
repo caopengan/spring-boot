@@ -5,6 +5,7 @@
     <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
     <link th:href="@{/css/toastr.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/jquery-validate.css}" rel="stylesheet"/>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
     <title>首页</title>
 </head>
@@ -19,9 +20,16 @@
             </ul>
             <ul class="menu pull-right">
                 <li class="presentation" th:if="${session.userName != null}" th:text="${session.userName}"></li>
-                <li class="presentation" th:if="${session.userName != null}"><a>退出</a></li>
-                <li class="presentation" th:unless="${session.userName != null}"><a>登录</a></li>
-                <li class="presentation" th:unless="${session.userName != null}"><a target="_blank" href="/register">注册</a></li>
+                <li class="presentation" th:if="${session.userName != null}" >
+                    <a id="logout" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">退出<span class="caret"></span></a>
+                    <ul class="dropdown-menu" aria-labelledby="logout">
+                        <li><a>个人管理</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/logout">退出登录</a></li>
+                    </ul>
+                </li>
+                <li class="presentation" th:unless="${session.userName != null}"><a data-toggle="modal" data-target="#loginModal">登录</a></li>
+                <li class="presentation" th:unless="${session.userName != null}"><a href="/register">注册</a></li>
             </ul>
         </div>
     </nav>
@@ -51,17 +59,41 @@
             </div>
         </div>
     </div>
-    <!--<h1>我是首页</h1>
-    <p th:text="${msg}">3333</p>
-    <p th:text="${msg}">3333</p>
-    <div  id="head">
-        webSocket消息推送
-    </div>
-    <div  id="msg">
-    </div>-->
+
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="loginModal" aria-labelledby="loginModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">登录</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="email" class="control-label">邮箱:</label>
+                            <input type="text" class="form-control required" id="email" name="email" placeholder="邮箱" data-tip="请输入您的邮箱" data-valid="isNonEmpty||isEmail" data-error="邮箱不能为空||邮箱格式不正确" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label">密码:</label>
+                            <input type="password" id="password" name="password" class="form-control required" placeholder="至少6位密码，区分大小写" data-tip="请输入您的密码" data-valid="isNonEmpty" data-error="密码不能为空" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="login();">登录</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
 </body>
 <script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery-validate.js}"></script>
 <script type="text/javascript" th:src="@{/js/toastr.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery.pjax.js}"></script>
 <!--<script type="text/javascript" th:src="@{/js/sockjs-1.1.1.js}"></script>-->
@@ -80,54 +112,46 @@
                 "showMethod":"fadeIn",//显示时的动画方式
                 "hideMethod":"fadeOut"//消失时的动画方式
             };
-
-        /*$.pjax({
-            url:'',
-            selector: 'a',
-            container: '#container', //内容替换的容器
-            show: 'fade',  //展现的动画，支持默认和fade, 可以自定义动画方式，这里为自定义的function即可。
-            cache: true,  //是否使用缓存
-            storage: true,  //是否使用本地存储
-            titleSuffix: '', //标题后缀
-            filter: function(){},
-            callback: function(){}
-        });*/
-
         $(document).pjax('a', '#container');
 
-//        $.pjax({
-//            url: '',
-//            container: '#container'
-//        });
-
-//        $.pjax.reload('#container');
-
-//        $('#register').click(function(){
-//            $.pjax({
-//                url:'',
-//                container: '#container'
-//            });
-//        });
-
-//        $("#register").click(function(e){
-//            if(window.history.pushState) {
-//                e.preventDefault(); //不跟随原链接跳转
-//                url = $(this).attr('href');
-//                $.ajax({
-//                    url:url,
-//                    type:"GET",
-//                    async:true,
-//                    success:function(data){
-//                        window.history.pushState(null, null, url); //改变URL和添加返回历史
-//                        document.title = data.title; //设置标题
-//                        $('#container').html(data); //设置内容
-//                    }
-//                });
-//            }
-//        });
-
+        initFormValidate();
     });
 
+    //初始化表单验证
+    function initFormValidate() {
+        $('form').validate({
+            onFocus: function() {
+                this.parent().addClass('active');
+                return false;
+            },
+            onBlur: function() {
+                var $parent = this.parent();
+                var _status = parseInt(this.attr('data-status'));
+                $parent.removeClass('active');
+                if (!_status) {
+                    $parent.addClass('error');
+                }
+                return false;
+            }
+        });
+    }
+
+    //登录
+    function login() {
+        if($("#loginForm").validate('submitValidate')){
+            $.ajax({
+                url:"/ajaxLogin",
+                type:"post",
+                data:{"email":$("#email").val(),"password":$("#password").val()},
+                dataType:"text",
+                success:function (data) {
+                    if(data == "success"){
+                        window.location.href = "/index";
+                    }
+                }
+            });
+        }
+    }
 
     function initWebSocket(){
         var websocket;

@@ -9,7 +9,8 @@ import javax.persistence.NamedQuery;
 import java.sql.Timestamp;
 
 @Entity
-@NamedQuery(name = "User.withNameAndAddressNamedQuery",query = "select u from User u  where u.name=?1 and u.address=?2")
+//@NamedQuery(name = "User.withNameAndAddressNamedQuery",query = "select u from User u  where u.name=?1 and u.address=?2")
+@NamedQuery(name = "User.withEmailAndPasswordQuery",query = "select u from User u where u.email = ?1 and u.password = ?2")
 @Component
 public class User {
     @Id

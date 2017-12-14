@@ -9,4 +9,8 @@ public interface UserService{
 
     public List<User> getUserList();
 
+    public boolean createUser(User user);
+
+    public boolean userLogin();
+
 }
